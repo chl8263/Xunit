@@ -1,6 +1,17 @@
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Main {
 
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
     public static void main(String [] args){
-        System.out.println("xunit java");
+        WasRun wasRun = new WasRun("testMethod");
+
+        logger.info(wasRun.wasRun());
+
+        wasRun.testMethod();
+
+        logger.info(wasRun.wasRun());
     }
 }
