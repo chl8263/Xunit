@@ -6,7 +6,7 @@ public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String [] args){
-        WasRun wasRun = new WasRun("testMethod");
+        WasRun wasRun = new WasRun();
 
         logger.info(wasRun.wasRun());
 

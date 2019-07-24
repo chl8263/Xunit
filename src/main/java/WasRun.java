@@ -2,16 +2,13 @@ import com.sun.org.apache.xpath.internal.operations.Bool;
 
 public class WasRun {
 
-    WasRun(WasRun wasRun , String name){
-        wasRun = this;
-        this.wasRun(false);
+    private boolean wasRun = false;
+
+    public boolean getWasRun(){
+        return wasRun;
     }
 
-    /*public Boolean wasRun(){
-        this.wasRun()
-    }*/
-
-    public Boolean wasRun(Boolean bool){
-        return bool;
+    public void testMethod(){
+        wasRun = true;
     }
 }
