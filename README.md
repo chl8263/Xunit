@@ -2,7 +2,7 @@
 
 - 테스트 케이스 프레임워크를 만들기
 
-테스트 프레임워크에 대한 할일 목록
+##테스트 프레임워크에 대한 할일 목록
 
 - [ ] 테스트 메서드 호출하기
 - [ ] 먼저 setUp 호출하기
@@ -11,6 +11,21 @@
 - [ ] 여러 개의 테스트 실행하기
 - [ ] 수집된 결과를 출력하기
 
+
+첫번째 원시테스트에는 테스트가 호출이 되면 true, 그렇지 않으면 false 를 반환할 작은 프로그램이 필요하다.
+
+원시적으로 class 안에 flag값을 두어 인쇄해 볼 수 있겠다.
 ~~~
-public void main (){}
+public class WasRun {
+
+    private boolean wasRun = false;
+
+    public boolean getWasRun(){
+        return wasRun;
+    }
+
+    public void testMethod(){
+        wasRun = true;
+    }
+}
 ~~~
