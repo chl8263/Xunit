@@ -11,7 +11,6 @@
 - [ ] 여러 개의 테스트 실행하기
 - [ ] 수집된 결과를 출력하기
 
-'''java
-public void main (){
-}
+'''
+public void main (){}
 '''
