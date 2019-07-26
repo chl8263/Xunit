@@ -31,3 +31,29 @@ public class WasRun {
     }
 }
 ~~~
+
+
+다음으로 필요한것은 테스트 메서드를 직접 호출하는 대신 진짜 인터페이스인 run()메서드를 사용하는 것이다.
+
+테스트는 다음과 같이 변하게 된다.
+
+~~~
+public class WasRun {
+    private boolean wasRun = false;
+
+    public boolean getWasRun() {
+        return this.wasRun;
+    }
+
+    public void testMethod() {
+        wasRun = true;
+    }
+
+    public void run(){
+        this.testMethod();
+    }
+}
+~~~
+
+
+
