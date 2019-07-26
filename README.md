@@ -55,5 +55,22 @@ public class WasRun {
 }
 ~~~
 
+그렇다면 Main 함수의 코드가 이렇게 될 것이다.
 
+~~~
+public class Main {
+
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
+    public static void main(String [] args){
+        WasRun wasRun = new WasRun();
+
+        logger.info(String.valueOf(wasRun.getWasRun()));
+
+        wasRun.run();
+
+        logger.info(String.valueOf(wasRun.getWasRun()));
+    }
+}
+~~~
 
