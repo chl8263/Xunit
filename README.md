@@ -31,3 +31,84 @@ public class WasRun {
     }
 }
 ~~~
+
+
+다음으로 필요한것은 테스트 메서드를 직접 호출하는 대신 진짜 인터페이스인 run()메서드를 사용하는 것이다.
+
+테스트는 다음과 같이 변하게 된다.
+
+~~~
+public class WasRun {
+    private boolean wasRun = false;
+
+    public boolean getWasRun() {
+        return this.wasRun;
+    }
+
+    public void testMethod() {
+        wasRun = true;
+    }
+
+    public void run(){
+        this.testMethod();
+    }
+}
+~~~
+
+그렇다면 Main 함수의 코드가 이렇게 될 것이다.
+
+~~~
+public class Main {
+
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
+    public static void main(String [] args){
+        WasRun wasRun = new WasRun();
+
+        logger.info(String.valueOf(wasRun.getWasRun()));
+
+        wasRun.run();
+
+        logger.info(String.valueOf(wasRun.getWasRun()));
+    }
+}
+~~~
+
+Test의 name 도 추가해주는 코드도 작성해 준다.
+
+~~~
+public class WasRun {
+    private boolean wasRun ;
+    private String name ;
+
+    public WasRun( String name){
+        this.wasRun = false;
+        this.name = name;
+    }
+
+    public boolean getWasRun() {
+        return this.wasRun;
+    }
+
+    public void testMethod() {
+        wasRun = true;
+    }
+
+    public void run(){
+        this.testMethod();
+    }
+}
+~~~
+
+WasRun class 는 독립된 두가지 일을 수행한다.
+
+하나는 메스드가 호출되었는지 그렇지 않은지를 기억하는 일이고, 또다른 하나는 메서드를 동적으로 호출하는 일이다.
+
+이제 여기서 유사분열을 일으킬 시기이며 TastCase 상위 클래스를 만들고 WasRun이 이를 상속받게 하자.
+
+~~~
+public class WasRun extends TestCase{
+~~~
+
+
+
