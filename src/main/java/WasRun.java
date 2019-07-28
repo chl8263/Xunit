@@ -2,11 +2,10 @@ import com.sun.org.apache.xpath.internal.operations.Bool;
 
 public class WasRun extends TestCase{
     private boolean wasRun ;
-    private String name ;
 
     public WasRun( String name){
+        super(name);
         this.wasRun = false;
-        this.name = name;
     }
 
     public boolean getWasRun() {
@@ -17,7 +16,7 @@ public class WasRun extends TestCase{
         wasRun = true;
     }
 
-    public void run(){
+    /*public void run(){
         this.testMethod();
-    }
+    }*/
 }
