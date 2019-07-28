@@ -55,26 +55,25 @@ public class WasRun {
 }
 ~~~
 
-그렇다면 Main 함수의 코드가 이렇게 될 것이다.
+그렇다면 모든 Test의 실행을 Test 할 Class TestCaseTest class 를만들고 그 함수의 코드가 이렇게 될 것이다.
 
 ~~~
-public class Main {
+class TestCaseTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    public static void main(String[] args) {
 
-    public static void main(String [] args){
-        WasRun wasRun = new WasRun();
+       WasRun wasRun = new WasRun();
 
-        logger.info(String.valueOf(wasRun.getWasRun()));
+       logger.info(String.valueOf(wasRun.getWasRun()));
 
-        wasRun.run();
+       wasRun.run();
 
-        logger.info(String.valueOf(wasRun.getWasRun()));
+       logger.info(String.valueOf(wasRun.getWasRun()));
     }
 }
 ~~~
 
-Test의 name 도 추가해주는 코드도 작성해 준다.
+Test의 name 도 추가해주는 코드도 작성해 준다. 차후 name 으로 외부에서 method 에 접근 할 수 있도록 도와줄 것이다.
 
 ~~~
 public class WasRun {
@@ -110,5 +109,110 @@ WasRun class 는 독립된 두가지 일을 수행한다.
 public class WasRun extends TestCase{
 ~~~
 
+WasRun class 의 name 속성을 상위class인 TestCase 로 끌어 올리자.
+
+~~~
+public class TestCase {
+
+    protected String name;
+
+    public TestCase (String name){
+        this.name = name;
+    }
+}
+~~~
+
+~~~
+public class WasRun extends TestCase{
+    private boolean wasRun ;
+
+    public WasRun( String name){
+        super(name);
+        this.wasRun = false;
+    }
+
+    public boolean getWasRun() {
+        return this.wasRun;
+    }
+
+    public void testMethod() {
+        wasRun = true;
+    }
+
+    public void run(){
+        this.testMethod();
+    }
+}
+
+~~~
+
+WasRun class 의 run 메소드는 name 맴버변수를 동적으로 받아와 그 method를 실행 시켜주는 역할을 하도록 만들어 준다.
 
 
+~~~
+public abstract class TestCase {
+
+    private static final Logger logger = LoggerFactory.getLogger(TestCase.class);
+
+    protected String name;
+
+    public TestCase (String name){
+        this.name = name;
+    }
+
+    public  void run(){
+        try {
+            logger.info("[ "+name + "] method execute !!");
+            Method method = this.getClass().getMethod(this.name, null);
+            method.invoke(this, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+~~~
+
+이 과정을 Test 해보는 코드는 다음과 같다.
+
+~~~
+class TestCaseTest  {
+
+    private static final Logger logger = LoggerFactory.getLogger(TestCaseTest.class);
+
+    public static void main(String[] args) {
+
+        TestCase wasRun = new WasRun("testMethod");
+
+        logger.info("test :: --> " + ((WasRun) wasRun).getWasRun());
+
+        wasRun.run();
+
+        logger.info("test :: --> " + ((WasRun) wasRun).getWasRun());
+
+    }
+}
+~~~
+
+결과는 다음과 같이 나오게 된다.
+
+~~~
+16:30:29.575 [main] INFO TestCaseTest - test :: --> false
+16:30:29.577 [main] INFO TestCase - [ testMethod ] method execute !!
+16:30:29.577 [main] INFO TestCaseTest - test :: --> true
+
+Process finished with exit code 0
+~~~
+
+그럼 이제 Test Framwork 의 TODO 목록중 하나를 지워도 된다.
+
+## 테스트 프레임워크에 대한 할일 목록
+
+- [x] 테스트 메서드 호출하기
+- [ ] 먼저 setUp 호출하기
+- [ ] 나중에 tearDown 호출하기
+- [ ] 테스트 메서드가 실패하더라도 tearDown 호출하기
+- [ ] 여러 개의 테스트 실행하기
+- [ ] 수집된 결과를 출력하기
+
+
+---
