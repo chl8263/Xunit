@@ -55,26 +55,52 @@ public class WasRun {
 }
 ~~~
 
-그렇다면 Main 함수의 코드가 이렇게 될 것이다.
+그렇다면 모든 Test의 실행을 Test 할 Class TestCaseTest class 를만들고 그 함수의 코드가 이렇게 될 것이다.
 
 ~~~
-public class Main {
+class TestCaseTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    public static void main(String[] args) {
 
-    public static void main(String [] args){
-        WasRun wasRun = new WasRun();
+       WasRun wasRun = new WasRun();
 
-        logger.info(String.valueOf(wasRun.getWasRun()));
+       logger.info(String.valueOf(wasRun.getWasRun()));
 
-        wasRun.run();
+       wasRun.run();
 
-        logger.info(String.valueOf(wasRun.getWasRun()));
+       logger.info(String.valueOf(wasRun.getWasRun()));
     }
 }
 ~~~
 
-Test의 name 도 추가해주는 코드도 작성해 준다.
+지금 까지의  WasRun class 의 Test 메서드를 동적으로 호출할 수 있게뜸 만들어 준다.
+
+~~~
+class TestCaseTest extends TestCase {
+
+    public TestCaseTest(String name) {
+        super(name);
+    }
+
+    @Override
+    public void run() {
+        try {
+            Method method = this.getClass().getMethod("run", null);
+            method.invoke(this, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+
+        new WasRun("testMethod").run();
+        new TestCaseTest("test").run();
+    }
+}
+~~~
+
+Test의 name 도 추가해주는 코드도 작성해 준다. 차후 name 으로 외부에서 method 에 접근 할 수 있도록 도와줄 것이다.
 
 ~~~
 public class WasRun {
@@ -147,7 +173,7 @@ public class WasRun extends TestCase{
 
 ~~~
 
-WasRun class 의 run 메소드는 꼭 있어야하는 기능 이므로 TestCas에 abstract 메소드를 추가해주면 다음과 같다.
+WasRun class 의 run 메소드는 꼭 있어야하는 기능 이므로 TestCas에 abstract 메소드를 추가해 준다.
 
 
 ~~~
@@ -162,3 +188,4 @@ public abstract class TestCase {
     public abstract void run();
 }
 ~~~
+
