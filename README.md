@@ -92,11 +92,6 @@ class TestCaseTest extends TestCase {
         }
     }
 
-    public static void main(String[] args) {
-
-        new WasRun("testMethod").run();
-        new TestCaseTest("test").run();
-    }
 }
 ~~~
 
