@@ -172,3 +172,47 @@ public abstract class TestCase {
 }
 ~~~
 
+이 과정을 Test 해보는 코드는 다음과 같다.
+
+~~~
+class TestCaseTest  {
+
+    private static final Logger logger = LoggerFactory.getLogger(TestCaseTest.class);
+
+    public static void main(String[] args) {
+
+        TestCase wasRun = new WasRun("testMethod");
+
+        logger.info("test :: --> " + ((WasRun) wasRun).getWasRun());
+
+        wasRun.run();
+
+        logger.info("test :: --> " + ((WasRun) wasRun).getWasRun());
+
+    }
+}
+~~~
+
+결과는 다음과 같이 나오게 된다.
+
+~~~
+16:30:29.575 [main] INFO TestCaseTest - test :: --> false
+16:30:29.577 [main] INFO TestCase - [ testMethod ] method execute !!
+16:30:29.577 [main] INFO TestCaseTest - test :: --> true
+
+Process finished with exit code 0
+~~~
+
+그럼 이제 Test Framwork 의 TODO 목록중 하나를 지워도 된다.
+
+## 테스트 프레임워크에 대한 할일 목록
+
+- [x] 테스트 메서드 호출하기
+- [ ] 먼저 setUp 호출하기
+- [ ] 나중에 tearDown 호출하기
+- [ ] 테스트 메서드가 실패하더라도 tearDown 호출하기
+- [ ] 여러 개의 테스트 실행하기
+- [ ] 수집된 결과를 출력하기
+
+
+---
