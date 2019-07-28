@@ -123,3 +123,27 @@ public class TestCase {
 }
 ~~~
 
+~~~
+public class WasRun extends TestCase{
+    private boolean wasRun ;
+
+    public WasRun( String name){
+        super(name);
+        this.wasRun = false;
+    }
+
+    public boolean getWasRun() {
+        return this.wasRun;
+    }
+
+    public void testMethod() {
+        wasRun = true;
+    }
+
+    public void run(){
+        this.testMethod();
+    }
+}
+
+~~~
+
