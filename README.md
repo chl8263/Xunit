@@ -74,3 +74,29 @@ public class Main {
 }
 ~~~
 
+Test의 name 도 추가해주는 코드도 작성해 준다.
+
+~~~
+public class WasRun {
+    private boolean wasRun ;
+    private String name ;
+
+    public WasRun(boolean wasRun , String name){
+        this.wasRun = wasRun;
+        this.name = name;
+    }
+
+    public boolean getWasRun() {
+        return this.wasRun;
+    }
+
+    public void testMethod() {
+        wasRun = true;
+    }
+
+    public void run(){
+        this.testMethod();
+    }
+}
+~~~
+
