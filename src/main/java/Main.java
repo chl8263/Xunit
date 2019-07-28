@@ -6,12 +6,12 @@ public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String [] args){
-        WasRun wasRun = new WasRun();
+        WasRun wasRun = new WasRun("testMethod");
 
-        logger.info(wasRun.wasRun());
+        logger.info(String.valueOf(wasRun.getWasRun()));
 
-        wasRun.testMethod();
+        wasRun.run();
 
-        logger.info(wasRun.wasRun());
+        logger.info(String.valueOf(wasRun.getWasRun()));
     }
 }

@@ -1,15 +1,23 @@
 import com.sun.org.apache.xpath.internal.operations.Bool;
 
-public class WasRun {
+public class WasRun extends TestCase{
+    private boolean wasRun ;
+    private String name ;
 
-    private boolean wasRun = false;
-
-    public boolean getWasRun(){
-        return wasRun;
+    public WasRun( String name){
+        this.wasRun = false;
+        this.name = name;
     }
 
-    public void testMethod(){
+    public boolean getWasRun() {
+        return this.wasRun;
+    }
+
+    public void testMethod() {
         wasRun = true;
     }
 
+    public void run(){
+        this.testMethod();
+    }
 }
