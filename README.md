@@ -81,8 +81,8 @@ public class WasRun {
     private boolean wasRun ;
     private String name ;
 
-    public WasRun(boolean wasRun , String name){
-        this.wasRun = wasRun;
+    public WasRun( String name){
+        this.wasRun = false;
         this.name = name;
     }
 
@@ -100,9 +100,15 @@ public class WasRun {
 }
 ~~~
 
-WasRun class 는 족립된 두가지 일을 수행한다.
+WasRun class 는 독립된 두가지 일을 수행한다.
 
 하나는 메스드가 호출되었는지 그렇지 않은지를 기억하는 일이고, 또다른 하나는 메서드를 동적으로 호출하는 일이다.
 
 이제 여기서 유사분열을 일으킬 시기이며 TastCase 상위 클래스를 만들고 WasRun이 이를 상속받게 하자.
+
+~~~
+public class WasRun extends TestCase{
+~~~
+
+
 
