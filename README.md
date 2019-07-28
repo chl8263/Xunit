@@ -110,5 +110,16 @@ WasRun class 는 독립된 두가지 일을 수행한다.
 public class WasRun extends TestCase{
 ~~~
 
+WasRun class 의 name 속성을 상위class인 TestCase 로 끌어 올리자.
 
+~~~
+public class TestCase {
+
+    private String name;
+
+    public TestCase (String name){
+        this.name = name;
+    }
+}
+~~~
 
