@@ -73,28 +73,6 @@ class TestCaseTest {
 }
 ~~~
 
-지금 까지의  WasRun class 의 Test 메서드를 동적으로 호출할 수 있게뜸 만들어 준다.
-
-~~~
-class TestCaseTest extends TestCase {
-
-    public TestCaseTest(String name) {
-        super(name);
-    }
-
-    @Override
-    public void run() {
-        try {
-            Method method = this.getClass().getMethod("run", null);
-            method.invoke(this, null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-}
-~~~
-
 Test의 name 도 추가해주는 코드도 작성해 준다. 차후 name 으로 외부에서 method 에 접근 할 수 있도록 도와줄 것이다.
 
 ~~~
@@ -168,11 +146,13 @@ public class WasRun extends TestCase{
 
 ~~~
 
-WasRun class 의 run 메소드는 꼭 있어야하는 기능 이므로 TestCas에 abstract 메소드를 추가해 준다.
+WasRun class 의 run 메소드는 name 맴버변수를 동적으로 받아와 그 method를 실행 시켜주는 역할을 하도록 만들어 준다.
 
 
 ~~~
 public abstract class TestCase {
+
+    private static final Logger logger = LoggerFactory.getLogger(TestCase.class);
 
     protected String name;
 
@@ -180,7 +160,15 @@ public abstract class TestCase {
         this.name = name;
     }
 
-    public abstract void run();
+    public  void run(){
+        try {
+            logger.info("[ "+name + "] method execute !!");
+            Method method = this.getClass().getMethod(this.name, null);
+            method.invoke(this, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
 ~~~
 
