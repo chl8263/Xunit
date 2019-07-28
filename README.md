@@ -115,7 +115,7 @@ WasRun class 의 name 속성을 상위class인 TestCase 로 끌어 올리자.
 ~~~
 public class TestCase {
 
-    private String name;
+    protected String name;
 
     public TestCase (String name){
         this.name = name;
@@ -147,9 +147,18 @@ public class WasRun extends TestCase{
 
 ~~~
 
-마지막으로 run() 메서드는 상위클래스의 맴버 변수만을 사용하므로 이것도 상위 클래스로 올리는 것이 맞는것 같다.
-
-(항상 오퍼레이션을 데이터근터에 놓을 방법을 고민하자.)
+WasRun class 의 run 메소드는 꼭 있어야하는 기능 이므로 TestCas에 abstract 메소드를 추가해주면 다음과 같다.
 
 
+~~~
+public abstract class TestCase {
 
+    protected String name;
+
+    public TestCase (String name){
+        this.name = name;
+    }
+
+    public abstract void run();
+}
+~~~
