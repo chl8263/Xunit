@@ -214,5 +214,4 @@ Process finished with exit code 0
 - [ ] 여러 개의 테스트 실행하기
 - [ ] 수집된 결과를 출력하기
 
-
 ---
