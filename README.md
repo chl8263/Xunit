@@ -447,18 +447,19 @@ Exception in thread "main" AssertFaliedError
 Process finished with exit code 1
 ~~~
 
-성공할 수 있는 방법은 단순히 wasRun class의 testMethod 안에 tearDown 을 호출하면 될것 같다.
+성공할 수 있는 방법은 단순히 TestCase class의 run() 안에 tearDown 을 호출하면 될것 같다.
 ~~~
-public class WasRun extends TestCase{
-    @Override
-    public void tearDown() {
-        this.log = this.log + " tearDown";
-    }
-
-    public void testMethod() {
-        wasRun = true;
-        this.log = this.log + " testMethod";
-        this.tearDown();
+public  void run(){
+        try {
+            setUp();
+            logger.info("[ "+name + " ] method execute !!");
+            Method method = this.getClass().getMethod(this.name, null);
+            method.invoke(this, null);
+            tearDown();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 ~~~
 
@@ -497,3 +498,92 @@ public static void main(String[] args) {
     }
 ~~~
 
+가짜 구현부터 시작해 보겠다.
+
+~~~
+public class TestResult {
+
+    public String summary() {
+        return "1 run, 0 failed";
+    }
+}
+~~~
+
+위와 같이 TestResult class에 다음과 같이 가짜구현을 시켜준뒤
+
+TestCase class 의 run 메소드가 TestResult 를 반환하게 만들어 준다.
+
+~~~
+public TestResult run(){
+        TestResult result = new TestResult();
+        try {
+            setUp();
+            logger.info("[ "+name + " ] method execute !!");
+            Method method = this.getClass().getMethod(this.name, null);
+            method.invoke(this, null);
+            tearDown();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+}
+~~~
+
+이제 summary의 구현을 조금씩 실체화 하여보자.
+
+우선 테스트를 count하는 변수를 만들고 summary 함수에 더하는 식으로 구현하고 생성하는 runCount를 초기화하고 testStart() 라는 메서드를 이용하여
+runCount 를 하나씩 증가 시킨다.
+~~~
+public class TestResult {
+
+    protected int runCount;
+
+    public TestResult(){
+        this.runCount = 0;
+    }
+
+    public void testStart(){
+        this.runCount ++;
+    }
+
+    public String summary() {
+        return  runCount + " run, 0 failed";
+    }
+}
+~~~
+
+TestCase class 의 run 함수는 다음과 같이 변한다.
+~~~
+ public TestResult run(){
+        TestResult result = new TestResult();
+        try {
+            result.testStart();
+            setUp();
+            logger.info("[ "+name + " ] method execute !!");
+            Method method = this.getClass().getMethod(this.name, null);
+            method.invoke(this, null);
+            tearDown();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+~~~
+testCaseTest class 의 main 함수르 통해 검증을 해본다면
+~~~
+public static void main(String[] args) {
+
+        TestCase test = new WasRun("testMethod");
+
+        TestResult result = test.run();
+
+        Assert.assertTrue(result.summary().equals("1 run, 0 failed"));
+    }
+~~~
+아래와 같이 성공한 것을볼 수 있다.
+~~~
+18:26:20.457 [main] INFO TestCase - [ testMethod ] method execute !!
+18:26:20.460 [main] INFO Assert - Test passed
+
+Process finished with exit code 0
+~~~
