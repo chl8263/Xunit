@@ -9,13 +9,23 @@ class TestCaseTest  {
 
     public static void main(String[] args) {
 
-        TestCase wasRun = new WasRun("testMethod");
+        /*TestCase wasRun = new WasRun("testMethod");
 
         logger.info("test :: --> " + ((WasRun) wasRun).getWasRun());
 
         wasRun.run();
 
-        logger.info("test :: --> " + ((WasRun) wasRun).getWasRun());
+        logger.info("test :: --> " + ((WasRun) wasRun).getWasRun());*/
+
+        TestCase test = new WasRun("testMethod");
+
+        test.run();
+
+        Assert.assertTrue(((WasRun) test).getWasSetUp() == 1);
+    }
+
+    public void testSetup(){
+
 
     }
 }

@@ -15,6 +15,7 @@ public abstract class TestCase {
 
     public  void run(){
         try {
+            setUp();
             logger.info("[ "+name + " ] method execute !!");
             Method method = this.getClass().getMethod(this.name, null);
             method.invoke(this, null);
@@ -22,4 +23,6 @@ public abstract class TestCase {
             e.printStackTrace();
         }
     }
+
+    public abstract void setUp();
 }
