@@ -651,4 +651,36 @@ Process finished with exit code 0
 
 코드를 수정해 보자.
 
+우선 run 메서드를 다음과 같이 수정할 수있겠다.
+
+~~~
+public TestResult run(){
+        TestResult result = new TestResult();
+
+        result.testStart();
+        setUp();
+        logger.info("[ " +name + " ] method execute !!");
+
+        try {
+            Method method = this.getClass().getMethod(this.name, null);
+            method.invoke(this, null);
+        } catch (InvocationTargetException ive) {
+            if(isAssertFailed(ive)){
+                //테스트가 실패한 경우
+            }else{
+                // 테스트가 에러난 경우
+            }
+        }catch (Exception e){
+            // 테스트가 에러난 경우
+        }finally {
+            tearDown();
+        }
+        return result;
+    }
+~~~
+try ~ catch 구문이 전과는 좀 다르게 수정이 되었다.
+
+테스트가 실패일 경우와 , 에러일 경우를 나누어 작성해 보았고 isAssertFailed 이라는 메서드는
+
+InvocationTargetException 이 InvocationTargetException 인지 아닌지 판단하는 함수이다. github 코드 TestCase.java 를 확인해보길 바란다.
 
