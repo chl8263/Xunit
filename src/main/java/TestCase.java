@@ -13,16 +13,22 @@ public abstract class TestCase {
         this.name = name;
     }
 
-    public  void run(){
+    public TestResult run(){
+        TestResult result = new TestResult();
         try {
+            result.testStart();
             setUp();
-            logger.info("[ "+name + " ] method execute !!");
+            logger.info("[ " +name + " ] method execute !!");
             Method method = this.getClass().getMethod(this.name, null);
             method.invoke(this, null);
+            tearDown();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return result;
     }
 
     public abstract void setUp();
+
+    public abstract void tearDown();
 }
