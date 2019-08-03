@@ -226,3 +226,80 @@ Process finished with exit code 0
 준비 단계에서 객체를 항상 생성 해야 한다. 매번 어떤 실험을 할 때마다 객체를 생성해야하는 문제에 직면하게 되는데,
 
 setUp 을 이용하여 객체를 재사용할 수 있도록 설정을 해보겠다.
+
+~~~
+public abstract class TestCase {
+
+    private static final Logger logger = LoggerFactory.getLogger(TestCase.class);
+
+    protected String name;
+
+    public TestCase (String name){
+        this.name = name;
+    }
+
+    public  void run(){
+        try {
+            setUp();
+            logger.info("[ "+name + " ] method execute !!");
+            Method method = this.getClass().getMethod(this.name, null);
+            method.invoke(this, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public abstract void setUp();
+}
+~~~
+다음과 같이 TestCase class 에 setUp 이라는 메서드를 만들어 주고
+~~~
+public class WasRun extends TestCase{
+    private boolean wasRun ;
+    private int wasSetUp;
+
+    public WasRun( String name){
+        super(name);
+        this.wasRun = false;
+    }
+
+    @Override
+    public void setUp() {
+        this.wasSetUp = 1;
+    }
+
+    public int getWasSetUp(){
+        return this.wasSetUp;
+    }
+
+    public boolean getWasRun() {
+        return this.wasRun;
+    }
+
+    public void testMethod() {
+        wasRun = true;
+    }
+}
+~~~
+wasRun class 에 wasSetUp 변수를 만들어 후츨 할 수 있도록 한다.
+
+main 함수에서 Test 해보면 ..
+
+~~~
+public static void main(String[] args) {
+
+        TestCase test = new WasRun("testMethod");
+
+        test.run();
+
+        Assert.assertTrue(((WasRun) test).getWasSetUp() == 1);
+    }
+~~~
+~~~
+14:31:17.822 [main] INFO TestCase - [ testMethod ] method execute !!
+14:31:17.827 [main] INFO Assert - Test passed
+
+Process finished with exit code 0
+~~~
+
+정상적으로 잘 작동하는것을 볼 수 있다.
