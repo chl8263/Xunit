@@ -303,3 +303,28 @@ Process finished with exit code 0
 ~~~
 
 정상적으로 잘 작동하는것을 볼 수 있다.
+
+여기에서 wasRun 플래그를 setUp에서 설정하도록 하면 wasRun을 단순화 할 수 있다.
+
+~~~
+ @Override
+    public void setUp() {
+        this.wasRun = false;
+        this.wasSetUp = 1;
+    }
+~~~
+
+여기에서 setUp 메서드를 이용함으로 인하여 test 케이스는 앞으로 커플링 되어 서로의 테스트를 방해할 경우를 없앤다.
+
+그럼 이제 Test Framwork 의 TODO 목록중 두번째를 지우겠다.
+
+## 테스트 프레임워크에 대한 할일 목록
+
+- [x] 테스트 메서드 호출하기
+- [X] 먼저 setUp 호출하기
+- [ ] 나중에 tearDown 호출하기
+- [ ] 테스트 메서드가 실패하더라도 tearDown 호출하기
+- [ ] 여러 개의 테스트 실행하기
+- [ ] 수집된 결과를 출력하기
+
+---
