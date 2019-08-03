@@ -1,6 +1,6 @@
 # Xunit in '테스트 주도개발'
 
-- 테스트 케이스 프레임워크를 만들기
+- 테스트 케이스 프레임워크 제작하기
 
 ## 테스트 프레임워크에 대한 할일 목록
 
@@ -214,5 +214,117 @@ Process finished with exit code 0
 - [ ] 여러 개의 테스트 실행하기
 - [ ] 수집된 결과를 출력하기
 
+---
+
+테스트를 작성하다보면 다음과 같은 3가지의 패턴이 발견된다.
+
+1. 준비(arrange) - 객체를 생성한다.
+2. 행동(act) - 어떤 자극을 준다.
+3. 확인(assert) - 결과를 검사한다.
+
+
+준비 단계에서 객체를 항상 생성 해야 한다. 매번 어떤 실험을 할 때마다 객체를 생성해야하는 문제에 직면하게 되는데,
+
+setUp 을 이용하여 객체를 재사용할 수 있도록 설정을 해보겠다.
+
+~~~
+public abstract class TestCase {
+
+    private static final Logger logger = LoggerFactory.getLogger(TestCase.class);
+
+    protected String name;
+
+    public TestCase (String name){
+        this.name = name;
+    }
+
+    public  void run(){
+        try {
+            setUp();
+            logger.info("[ "+name + " ] method execute !!");
+            Method method = this.getClass().getMethod(this.name, null);
+            method.invoke(this, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public abstract void setUp();
+}
+~~~
+다음과 같이 TestCase class 에 setUp 이라는 메서드를 만들어 주고
+~~~
+public class WasRun extends TestCase{
+    private boolean wasRun ;
+    private int wasSetUp;
+
+    public WasRun( String name){
+        super(name);
+        this.wasRun = false;
+    }
+
+    @Override
+    public void setUp() {
+        this.wasSetUp = 1;
+    }
+
+    public int getWasSetUp(){
+        return this.wasSetUp;
+    }
+
+    public boolean getWasRun() {
+        return this.wasRun;
+    }
+
+    public void testMethod() {
+        wasRun = true;
+    }
+}
+~~~
+wasRun class 에 wasSetUp 변수를 만들어 후츨 할 수 있도록 한다.
+
+main 함수에서 Test 해보면 ..
+
+~~~
+public static void main(String[] args) {
+
+        TestCase test = new WasRun("testMethod");
+
+        test.run();
+
+        Assert.assertTrue(((WasRun) test).getWasSetUp() == 1);
+    }
+~~~
+~~~
+14:31:17.822 [main] INFO TestCase - [ testMethod ] method execute !!
+14:31:17.827 [main] INFO Assert - Test passed
+
+Process finished with exit code 0
+~~~
+
+정상적으로 잘 작동하는것을 볼 수 있다.
+
+여기에서 wasRun 플래그를 setUp에서 설정하도록 하면 wasRun을 단순화 할 수 있다.
+
+~~~
+ @Override
+    public void setUp() {
+        this.wasRun = false;
+        this.wasSetUp = 1;
+    }
+~~~
+
+여기에서 setUp 메서드를 이용함으로 인하여 test 케이스는 앞으로 커플링 되어 서로의 테스트를 방해할 경우를 없앤다.
+
+그럼 이제 Test Framwork 의 TODO 목록중 두번째를 지우겠다.
+
+## 테스트 프레임워크에 대한 할일 목록
+
+- [x] 테스트 메서드 호출하기
+- [X] 먼저 setUp 호출하기
+- [ ] 나중에 tearDown 호출하기
+- [ ] 테스트 메서드가 실패하더라도 tearDown 호출하기
+- [ ] 여러 개의 테스트 실행하기
+- [ ] 수집된 결과를 출력하기
 
 ---
