@@ -424,3 +424,60 @@ public class WasRun extends TestCase{
 - [ ] 수집된 결과를 출력하기
 - [x] WasRun에 로그 문자열 남기기
 ---
+
+이제 tearDown 구현으로 넘어가겠다.
+
+위의 main 함수 코드에서 tearDown 테스트에 아래와 같이 실패하게 된다.
+~~~
+public static void main(String[] args) {
+
+        TestCase test = new WasRun("testMethod");
+
+        test.run();
+
+        Assert.assertTrue(((WasRun) test).getLog().equals("setUp testMethod tearDown"));
+    }
+~~~
+~~~
+16:49:58.734 [main] INFO TestCase - [ testMethod ] method execute !!
+Exception in thread "main" AssertFaliedError
+	at Assert.assertTrue(Assert.java:14)
+	at TestCaseTest.main(TestCaseTest.java:24)
+
+Process finished with exit code 1
+~~~
+
+성공할 수 있는 방법은 단순히 wasRun class의 testMethod 안에 tearDown 을 호출하면 될것 같다.
+~~~
+public class WasRun extends TestCase{
+    @Override
+    public void tearDown() {
+        this.log = this.log + " tearDown";
+    }
+
+    public void testMethod() {
+        wasRun = true;
+        this.log = this.log + " testMethod";
+        this.tearDown();
+    }
+~~~
+
+~~~
+17:04:40.355 [main] INFO TestCase - [ testMethod ] method execute !!
+17:04:40.359 [main] INFO Assert - Test passed
+
+Process finished with exit code 0
+~~~
+
+이렇게 tearDown() 호출까지 성공했고 TODO 목록을 하나 지워도 되겠다.
+
+ ## 테스트 프레임워크에 대한 할일 목록
+
+- [x] 테스트 메서드 호출하기
+- [x] 먼저 setUp 호출하기
+- [] 나중에 tearDown 호출하기
+- [ ] 테스트 메서드가 실패하더라도 tearDown 호출하기
+- [ ] 여러 개의 테스트 실행하기
+- [ ] 수집된 결과를 출력하기
+- [x] WasRun에 로그 문자열 남기기
+---
