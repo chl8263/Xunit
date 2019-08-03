@@ -328,3 +328,99 @@ Process finished with exit code 0
 - [ ] 수집된 결과를 출력하기
 
 ---
+
+나는 위의 단계에서 테스트를 호출하기 전 setUp() 메서드를 통해 초기화를 하였다.
+
+테스트가 계속 서로 독립적이기 바라면서 외부자원을 할당받은 테스트들은 작업을 마치기전에 tearDown() 을통하여
+
+자원을 반환할 필요가 있다.
+
+또하나의 flag를 도입하면 되지만 여기서 log를 찍는 방식으로 변경하고 TODO 목록에 새로운 목록을 추가 하겠다.
+
+## 테스트 프레임워크에 대한 할일 목록
+
+- [x] 테스트 메서드 호출하기
+- [X] 먼저 setUp 호출하기
+- [ ] 나중에 tearDown 호출하기
+- [ ] 테스트 메서드가 실패하더라도 tearDown 호출하기
+- [ ] 여러 개의 테스트 실행하기
+- [ ] 수집된 결과를 출력하기
+- [ ] WasRun에 로그 문자열 남기기
+---
+
+~~~
+public class WasRun extends TestCase{
+
+    private static final Logger logger = LoggerFactory.getLogger(WasRun.class);
+
+    private boolean wasRun ;
+    private int wasSetUp;
+    private String log = "";
+
+    public WasRun(String name){
+        super(name);
+    }
+
+    @Override
+    public void setUp() {
+        this.wasRun = false;
+        this.wasSetUp = 1;
+        this.log = this.log + "setUp";
+    }
+
+    @Override
+    public void tearDown() {
+        this.log = this.log + " tearDown";
+    }
+
+    public void testMethod() {
+        wasRun = true;
+        this.log = this.log + " testMethod";
+    }
+
+    public int getWasSetUp(){
+        return this.wasSetUp;
+    }
+
+    public boolean getWasRun() {
+        return this.wasRun;
+    }
+
+    public String getLog(){
+        return this.log;
+    }
+}
+~~~
+
+ wasRun class 에 log 를 추가해 주고,
+ 
+ ~~~
+ public static void main(String[] args) {
+
+        TestCase test = new WasRun("testMethod");
+
+        test.run();
+
+        Assert.assertTrue(((WasRun) test).getLog().equals("setUp testMethod"));
+    }
+ ~~~
+ 
+ ~~~
+    16:40:18.703 [main] INFO TestCase - [ testMethod ] method execute !!
+    16:40:18.705 [main] INFO Assert - Test passed
+
+    Process finished with exit code 0
+ ~~~
+ 
+ 위와 같은 log 방식으로 구현했고 TODO 목록 한개를 지워준다.
+ 
+ ## 테스트 프레임워크에 대한 할일 목록
+
+- [x] 테스트 메서드 호출하기
+- [x] 먼저 setUp 호출하기
+- [ ] 나중에 tearDown 호출하기
+- [ ] 테스트 메서드가 실패하더라도 tearDown 호출하기
+- [ ] 여러 개의 테스트 실행하기
+- [ ] 수집된 결과를 출력하기
+- [x] WasRun에 로그 문자열 남기기
+---
