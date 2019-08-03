@@ -481,3 +481,19 @@ Process finished with exit code 0
 - [ ] 수집된 결과를 출력하기
 - [x] WasRun에 로그 문자열 남기기
 ---
+
+테스트를 구현하는 도중 실패, 혹은 성공을 한다면 log로 그 기록을 호출하는 기능을 만들어 예외를 보고하는 기능을 만들어 보겠다.
+
+우선 나는 Test의 결과를 기록하는 TestResult class를 만들고 test.run() 이 이를 반환하게 하도록 만들겠다.
+
+~~~
+public static void main(String[] args) {
+
+        TestCase test = new WasRun("testMethod");
+
+        TestResult result = test.run();
+
+        Assert.assertTrue(result.getSummary().equals("1 run, 0 failed"));
+    }
+~~~
+
