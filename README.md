@@ -328,3 +328,283 @@ Process finished with exit code 0
 - [ ] 수집된 결과를 출력하기
 
 ---
+
+나는 위의 단계에서 테스트를 호출하기 전 setUp() 메서드를 통해 초기화를 하였다.
+
+테스트가 계속 서로 독립적이기 바라면서 외부자원을 할당받은 테스트들은 작업을 마치기전에 tearDown() 을통하여
+
+자원을 반환할 필요가 있다.
+
+또하나의 flag를 도입하면 되지만 여기서 log를 찍는 방식으로 변경하고 TODO 목록에 새로운 목록을 추가 하겠다.
+
+## 테스트 프레임워크에 대한 할일 목록
+
+- [x] 테스트 메서드 호출하기
+- [X] 먼저 setUp 호출하기
+- [ ] 나중에 tearDown 호출하기
+- [ ] 테스트 메서드가 실패하더라도 tearDown 호출하기
+- [ ] 여러 개의 테스트 실행하기
+- [ ] 수집된 결과를 출력하기
+- [ ] WasRun에 로그 문자열 남기기
+---
+
+~~~
+public class WasRun extends TestCase{
+
+    private static final Logger logger = LoggerFactory.getLogger(WasRun.class);
+
+    private boolean wasRun ;
+    private int wasSetUp;
+    private String log = "";
+
+    public WasRun(String name){
+        super(name);
+    }
+
+    @Override
+    public void setUp() {
+        this.wasRun = false;
+        this.wasSetUp = 1;
+        this.log = this.log + "setUp";
+    }
+
+    @Override
+    public void tearDown() {
+        this.log = this.log + " tearDown";
+    }
+
+    public void testMethod() {
+        wasRun = true;
+        this.log = this.log + " testMethod";
+    }
+
+    public int getWasSetUp(){
+        return this.wasSetUp;
+    }
+
+    public boolean getWasRun() {
+        return this.wasRun;
+    }
+
+    public String getLog(){
+        return this.log;
+    }
+}
+~~~
+
+ wasRun class 에 log 를 추가해 주고,
+ 
+ ~~~
+ public static void main(String[] args) {
+
+        TestCase test = new WasRun("testMethod");
+
+        test.run();
+
+        Assert.assertTrue(((WasRun) test).getLog().equals("setUp testMethod"));
+    }
+ ~~~
+ 
+ ~~~
+    16:40:18.703 [main] INFO TestCase - [ testMethod ] method execute !!
+    16:40:18.705 [main] INFO Assert - Test passed
+
+    Process finished with exit code 0
+ ~~~
+ 
+ 위와 같은 log 방식으로 구현했고 TODO 목록 한개를 지워준다.
+ 
+ ## 테스트 프레임워크에 대한 할일 목록
+
+- [x] 테스트 메서드 호출하기
+- [x] 먼저 setUp 호출하기
+- [ ] 나중에 tearDown 호출하기
+- [ ] 테스트 메서드가 실패하더라도 tearDown 호출하기
+- [ ] 여러 개의 테스트 실행하기
+- [ ] 수집된 결과를 출력하기
+- [x] WasRun에 로그 문자열 남기기
+---
+
+이제 tearDown 구현으로 넘어가겠다.
+
+위의 main 함수 코드에서 tearDown 테스트에 아래와 같이 실패하게 된다.
+~~~
+public static void main(String[] args) {
+
+        TestCase test = new WasRun("testMethod");
+
+        test.run();
+
+        Assert.assertTrue(((WasRun) test).getLog().equals("setUp testMethod tearDown"));
+    }
+~~~
+~~~
+16:49:58.734 [main] INFO TestCase - [ testMethod ] method execute !!
+Exception in thread "main" AssertFaliedError
+	at Assert.assertTrue(Assert.java:14)
+	at TestCaseTest.main(TestCaseTest.java:24)
+
+Process finished with exit code 1
+~~~
+
+성공할 수 있는 방법은 단순히 TestCase class의 run() 안에 tearDown 을 호출하면 될것 같다.
+~~~
+public  void run(){
+        try {
+            setUp();
+            logger.info("[ "+name + " ] method execute !!");
+            Method method = this.getClass().getMethod(this.name, null);
+            method.invoke(this, null);
+            tearDown();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+~~~
+
+~~~
+17:04:40.355 [main] INFO TestCase - [ testMethod ] method execute !!
+17:04:40.359 [main] INFO Assert - Test passed
+
+Process finished with exit code 0
+~~~
+
+이렇게 tearDown() 호출까지 성공했고 TODO 목록을 하나 지워도 되겠다.
+
+ ## 테스트 프레임워크에 대한 할일 목록
+
+- [x] 테스트 메서드 호출하기
+- [x] 먼저 setUp 호출하기
+- [x] 나중에 tearDown 호출하기
+- [ ] 테스트 메서드가 실패하더라도 tearDown 호출하기
+- [ ] 여러 개의 테스트 실행하기
+- [ ] 수집된 결과를 출력하기
+- [x] WasRun에 로그 문자열 남기기
+---
+
+테스트를 구현하는 도중 실패, 혹은 성공을 한다면 log로 그 기록을 호출하는 기능을 만들어 예외를 보고하는 기능을 만들어 보겠다.
+
+우선 나는 Test의 결과를 기록하는 TestResult class를 만들고 test.run() 이 이를 반환하게 하도록 만들겠다.
+
+~~~
+public static void main(String[] args) {
+
+        TestCase test = new WasRun("testMethod");
+
+        TestResult result = test.run();
+
+        Assert.assertTrue(result.getSummary().equals("1 run, 0 failed"));
+    }
+~~~
+
+가짜 구현부터 시작해 보겠다.
+
+~~~
+public class TestResult {
+
+    public String summary() {
+        return "1 run, 0 failed";
+    }
+}
+~~~
+
+위와 같이 TestResult class에 다음과 같이 가짜구현을 시켜준뒤
+
+TestCase class 의 run 메소드가 TestResult 를 반환하게 만들어 준다.
+
+~~~
+public TestResult run(){
+        TestResult result = new TestResult();
+        try {
+            setUp();
+            logger.info("[ "+name + " ] method execute !!");
+            Method method = this.getClass().getMethod(this.name, null);
+            method.invoke(this, null);
+            tearDown();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+}
+~~~
+
+이제 summary의 구현을 조금씩 실체화 하여보자.
+
+우선 테스트를 count하는 변수를 만들고 summary 함수에 더하는 식으로 구현하고 생성하는 runCount를 초기화하고 testStart() 라는 메서드를 이용하여
+runCount 를 하나씩 증가 시킨다.
+~~~
+public class TestResult {
+
+    protected int runCount;
+
+    public TestResult(){
+        this.runCount = 0;
+    }
+
+    public void testStart(){
+        this.runCount ++;
+    }
+
+    public String summary() {
+        return  runCount + " run, 0 failed";
+    }
+}
+~~~
+
+TestCase class 의 run 함수는 다음과 같이 변한다.
+~~~
+ public TestResult run(){
+        TestResult result = new TestResult();
+        try {
+            result.testStart();
+            setUp();
+            logger.info("[ "+name + " ] method execute !!");
+            Method method = this.getClass().getMethod(this.name, null);
+            method.invoke(this, null);
+            tearDown();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+~~~
+testCaseTest class 의 main 함수르 통해 검증을 해본다면
+~~~
+public static void main(String[] args) {
+
+        TestCase test = new WasRun("testMethod");
+
+        TestResult result = test.run();
+
+        Assert.assertTrue(result.summary().equals("1 run, 0 failed"));
+    }
+~~~
+아래와 같이 성공한 것을볼 수 있다.
+~~~
+18:26:20.457 [main] INFO TestCase - [ testMethod ] method execute !!
+18:26:20.460 [main] INFO Assert - Test passed
+
+Process finished with exit code 0
+~~~
+
+테스트가 성공한 케이스를 구현하였고 실패한 케이스의 테스트가 아직 남아있다.
+
+이로써 TODO 목록중 한개를 지우고 실패 테스트에 관한 항목을 TODO 목록에 추가해 준다.
+
+ ## 테스트 프레임워크에 대한 할일 목록
+
+- [x] 테스트 메서드 호출하기
+- [x] 먼저 setUp 호출하기
+- [x] 나중에 tearDown 호출하기
+- [ ] 테스트 메서드가 실패하더라도 tearDown 호출하기
+- [ ] 여러 개의 테스트 실행하기
+- [x] 수집된 결과를 출력하기
+- [x] WasRun에 로그 문자열 남기기
+- [ ] 실패한 테스트 보고하기
+---
+
+
+
+
+
