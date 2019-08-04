@@ -604,7 +604,83 @@ Process finished with exit code 0
 - [ ] 실패한 테스트 보고하기
 ---
 
+실패한 테스트분석을 진행해야 함에 있어 우선 실패한 테스트 케이스를 돌려보겠다.
 
+코드는 아래와 같다.
 
+~~~
+public void testMethod() {
 
+        this.log = this.log + " testMethod";
+
+        Assert.assertTrue(3 == 3);
+}
+~~~
+~~~
+public static void main(String[] args) {
+
+        TestCase test = new WasRun("testMethod");
+
+        TestResult result = test.run();
+
+        logger.info(result.summary());
+}
+~~~
+~~~
+19:06:04.790 [main] INFO TestCase - [ testMethod ] method execute !!
+java.lang.reflect.InvocationTargetException
+19:06:04.794 [main] INFO TestCaseTest - 1 run, 0 failed
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at TestCase.run(TestCase.java:23)
+	at TestCaseTest.main(TestCaseTest.java:22)
+Caused by: AssertFaliedError
+	at Assert.assertTrue(Assert.java:14)
+	at WasRun.testMethod(WasRun.java:33)
+	... 6 more
+
+Process finished with exit code 0
+~~~
+다음과 같은 에러가 난다.
+
+당연하다. 하지만 여기서 하나 빼먹은 점은 단순히 테스트에 실패했는지 아니면 에러가 났는지를 구별해야 한다.
+
+예를들어 테스트를 3개를 돌렸을때 첫번째 테스트에서 실패했다고 해서 뒤의 테스트에 지장이 가면 안되기 때문이다.
+
+코드를 수정해 보자.
+
+우선 run 메서드를 다음과 같이 수정할 수있겠다.
+
+~~~
+public TestResult run(){
+        TestResult result = new TestResult();
+
+        result.testStart();
+        setUp();
+        logger.info("[ " +name + " ] method execute !!");
+
+        try {
+            Method method = this.getClass().getMethod(this.name, null);
+            method.invoke(this, null);
+        } catch (InvocationTargetException ive) {
+            if(isAssertFailed(ive)){
+                //테스트가 실패한 경우
+            }else{
+                // 테스트가 에러난 경우
+            }
+        }catch (Exception e){
+            // 테스트가 에러난 경우
+        }finally {
+            tearDown();
+        }
+        return result;
+    }
+~~~
+try ~ catch 구문이 전과는 좀 다르게 수정이 되었다.
+
+테스트가 실패일 경우와 , 에러일 경우를 나누어 작성해 보았고 isAssertFailed 이라는 메서드는
+
+InvocationTargetException 이 InvocationTargetException 인지 아닌지 판단하는 함수이다. github 코드 TestCase.java 를 확인해보길 바란다.
 
