@@ -1,6 +1,7 @@
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public abstract class TestCase {
@@ -15,15 +16,24 @@ public abstract class TestCase {
 
     public TestResult run(){
         TestResult result = new TestResult();
+
+        result.testStart();
+        setUp();
+        logger.info("[ " +name + " ] method execute !!");
+
         try {
-            result.testStart();
-            setUp();
-            logger.info("[ " +name + " ] method execute !!");
             Method method = this.getClass().getMethod(this.name, null);
             method.invoke(this, null);
+        } catch (InvocationTargetException ive) {
+            if(isAssertFailed(ive)){
+                result.faliedCount++;
+            }else{
+                result.errorCount++;
+            }
+        }catch (Exception e){
+            result.errorCount++;
+        }finally {
             tearDown();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return result;
     }
@@ -31,4 +41,8 @@ public abstract class TestCase {
     public abstract void setUp();
 
     public abstract void tearDown();
+
+    private boolean isAssertFailed(InvocationTargetException e){
+        return e.getTargetException() instanceof InvocationTargetException;
+    }
 }

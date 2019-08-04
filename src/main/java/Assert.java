@@ -18,7 +18,6 @@ public class Assert {
 
 }
 
-
 class AssertFaliedError extends Error{
     public AssertFaliedError(){}
 }

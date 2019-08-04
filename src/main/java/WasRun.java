@@ -27,10 +27,27 @@ public class WasRun extends TestCase{
     }
 
     public void testMethod() {
-        wasRun = true;
 
         this.log = this.log + " testMethod";
-        this.tearDown();
+
+        Assert.assertTrue(3 == 4);
+
+    }
+
+    public void testMethod2() {
+
+        this.log = this.log + " testMethod2";
+
+        Assert.assertTrue(3 == 4);
+
+    }
+
+    public void testMethod3() {
+
+        this.log = this.log + " testMethod3";
+
+        Assert.assertTrue(3 == 3);
+
     }
 
 }
