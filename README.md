@@ -732,3 +732,16 @@ public static void main(String[] args) {
 - [x] WasRun에 로그 문자열 남기기
 - [x] 실패한 테스트 보고하기
 ---
+
+마지막 단계인 TestSuite 단계가 이다.
+
+내가 바로 위의 코드에서 test들을 main메소드 안에 나열하여 각 run 메소드에 TestResult 객체를 넘겨 결과를 확인하였다.
+
+즉, 개별 메소드로만 수행한 것인데 .. 좀더 견고한 어플리케이션을 만들고자 한다면 구룹화하고 그룹단위로 실행할 수 있어야 한다.
+
+하지만 여기서 중요한점은 테스트들이 개별, 그룹 단위로 수행될 수 있어야 한다는 점이다.
+
+그룹과 개별은 단위자체가 다르다 이것을 Composite패턴을 이용하면 해결이 가능하다.
+
+<https://ko.wikipedia.org/wiki/%EC%BB%B4%ED%8F%AC%EC%A7%80%ED%8A%B8_%ED%8C%A8%ED%84%B4>
+
