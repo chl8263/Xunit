@@ -733,7 +733,7 @@ public static void main(String[] args) {
 - [x] 실패한 테스트 보고하기
 ---
 
-마지막 단계인 TestSuite 단계가 이다.
+마지막 단계인 TestSuite 단계가 남아있다.
 
 내가 바로 위의 코드에서 test들을 main메소드 안에 나열하여 각 run 메소드에 TestResult 객체를 넘겨 결과를 확인하였다.
 
@@ -745,3 +745,74 @@ public static void main(String[] args) {
 
 컴포지트 패턴 설명 -> <https://ko.wikipedia.org/wiki/%EC%BB%B4%ED%8F%AC%EC%A7%80%ED%8A%B8_%ED%8C%A8%ED%84%B4>
 
+먼저 컴포지트 패턴을 구현할 interface를 만든다.
+
+~~~
+public interface DoTest {
+    void run(TestResult result);
+}
+~~~
+
+그다음 TestSuite class 를 만들어 TestCase들을 모아 실행시킬 수 있도록 코드를 구성하였다.
+
+~~~
+public class TestSuite implements DoTest {
+
+    private ArrayList<TestCase> testCases = new ArrayList<>();
+
+    @Override
+    public void run(TestResult result) {
+        for(TestCase aCase : testCases){
+            aCase.run(result);
+        }
+    }
+
+    public void addTestCase (TestCase testCase){
+        testCases.add(testCase);
+    }
+}
+~~~
+
+그렇다면 최종적으로 main 함수는 
+
+~~~
+public static void main(String[] args) {
+
+        TestResult result = new TestResult();
+
+        TestSuite testSuite = new TestSuite();
+
+        testSuite.addTestCase(new WasRun("testMethod"));
+        testSuite.addTestCase(new WasRun("testMethod2"));
+        testSuite.addTestCase(new WasRun("testMethod3"));
+
+        testSuite.run(result);
+
+        logger.info(result.summary());
+}
+~~~
+결과는 마찬가지로 아래와 같이 동일한 결과가 출력이 되는것을 볼 수 있다.
+~~~
+00:46:22.375 [main] INFO TestCase - [ testMethod ] method execute !!
+00:46:22.378 [main] INFO Assert - Test failed
+00:46:22.378 [main] INFO TestCase - [ testMethod2 ] method execute !!
+00:46:22.378 [main] INFO Assert - Test failed
+00:46:22.378 [main] INFO TestCase - [ testMethod3 ] method execute !!
+00:46:22.378 [main] INFO Assert - Test passed
+00:46:22.378 [main] INFO TestCaseTest - 3 run, 2 failed, 0 error
+~~~
+
+그렇다면 최종적으로 마지막 TODO 를 지워도 되겠다.
+ ## 테스트 프레임워크에 대한 할일 목록
+
+- [x] 테스트 메서드 호출하기
+- [x] 먼저 setUp 호출하기
+- [x] 나중에 tearDown 호출하기
+- [x] 테스트 메서드가 실패하더라도 tearDown 호출하기
+- [x] 여러 개의 테스트 실행하기
+- [x] 수집된 결과를 출력하기
+- [x] WasRun에 로그 문자열 남기기
+- [x] 실패한 테스트 보고하기
+---
+
+#회고
