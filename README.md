@@ -569,7 +569,7 @@ TestCase class 의 run 함수는 다음과 같이 변한다.
         return result;
     }
 ~~~
-testCaseTest class 의 main 함수르 통해 검증을 해본다면
+testCaseTest class 의 main 함수를 통해 검증을 해본다면
 ~~~
 public static void main(String[] args) {
 
@@ -682,5 +682,5 @@ try ~ catch 구문이 전과는 좀 다르게 수정이 되었다.
 
 테스트가 실패일 경우와 , 에러일 경우를 나누어 작성해 보았고 isAssertFailed 이라는 메서드는
 
-InvocationTargetException 이 InvocationTargetException 인지 아닌지 판단하는 함수이다. github 코드 TestCase.java 를 확인해보길 바란다.
+InvocationTargetException 이 AssertFaliedError 인지 아닌지 판단하는 함수이다. github 코드 TestCase.java 를 확인해보길 바란다.
 
