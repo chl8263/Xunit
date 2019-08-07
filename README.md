@@ -2,7 +2,7 @@
 
 - 테스트 케이스 프레임워크 제작하기
 
-## 테스트 프레임워크에 대한 할일 목록
+### 테스트 프레임워크에 대한 할일 목록
 
 - [ ] 테스트 메서드 호출하기
 - [ ] 먼저 setUp 호출하기
@@ -205,7 +205,7 @@ Process finished with exit code 0
 
 그럼 이제 Test Framwork 의 TODO 목록중 하나를 지워도 된다.
 
-## 테스트 프레임워크에 대한 할일 목록
+### 테스트 프레임워크에 대한 할일 목록
 
 - [x] 테스트 메서드 호출하기
 - [ ] 먼저 setUp 호출하기
@@ -318,7 +318,7 @@ Process finished with exit code 0
 
 그럼 이제 Test Framwork 의 TODO 목록중 두번째를 지우겠다.
 
-## 테스트 프레임워크에 대한 할일 목록
+### 테스트 프레임워크에 대한 할일 목록
 
 - [x] 테스트 메서드 호출하기
 - [X] 먼저 setUp 호출하기
@@ -337,7 +337,7 @@ Process finished with exit code 0
 
 또하나의 flag를 도입하면 되지만 여기서 log를 찍는 방식으로 변경하고 TODO 목록에 새로운 목록을 추가 하겠다.
 
-## 테스트 프레임워크에 대한 할일 목록
+### 테스트 프레임워크에 대한 할일 목록
 
 - [x] 테스트 메서드 호출하기
 - [X] 먼저 setUp 호출하기
@@ -414,7 +414,7 @@ public class WasRun extends TestCase{
  
  위와 같은 log 방식으로 구현했고 TODO 목록 한개를 지워준다.
  
- ## 테스트 프레임워크에 대한 할일 목록
+ ### 테스트 프레임워크에 대한 할일 목록
 
 - [x] 테스트 메서드 호출하기
 - [x] 먼저 setUp 호출하기
@@ -472,7 +472,7 @@ Process finished with exit code 0
 
 이렇게 tearDown() 호출까지 성공했고 TODO 목록을 하나 지워도 되겠다.
 
- ## 테스트 프레임워크에 대한 할일 목록
+ ### 테스트 프레임워크에 대한 할일 목록
 
 - [x] 테스트 메서드 호출하기
 - [x] 먼저 setUp 호출하기
@@ -592,7 +592,7 @@ Process finished with exit code 0
 
 이로써 TODO 목록중 한개를 지우고 실패 테스트에 관한 항목을 TODO 목록에 추가해 준다.
 
- ## 테스트 프레임워크에 대한 할일 목록
+ ### 테스트 프레임워크에 대한 할일 목록
 
 - [x] 테스트 메서드 호출하기
 - [x] 먼저 setUp 호출하기
@@ -719,3 +719,105 @@ public static void main(String[] args) {
 }
 ~~~
 
+지금까지 왔다면 나는 TODO를 하나더 지워도 되겠다.
+
+ ### 테스트 프레임워크에 대한 할일 목록
+
+- [x] 테스트 메서드 호출하기
+- [x] 먼저 setUp 호출하기
+- [x] 나중에 tearDown 호출하기
+- [ ] 테스트 메서드가 실패하더라도 tearDown 호출하기
+- [ ] 여러 개의 테스트 실행하기
+- [x] 수집된 결과를 출력하기
+- [x] WasRun에 로그 문자열 남기기
+- [x] 실패한 테스트 보고하기
+---
+
+마지막 단계인 TestSuite 단계가 남아있다.
+
+내가 바로 위의 코드에서 test들을 main메소드 안에 나열하여 각 run 메소드에 TestResult 객체를 넘겨 결과를 확인하였다.
+
+즉, 개별 메소드로만 수행한 것인데 .. 좀더 견고한 어플리케이션을 만들고자 한다면 구룹화하고 그룹단위로 실행할 수 있어야 한다.
+
+하지만 여기서 중요한점은 테스트들이 개별, 그룹 단위로 수행될 수 있어야 한다는 점이다.
+
+그룹과 개별은 단위자체가 다르다 이것을 Composite패턴을 이용하면 해결이 가능하다.
+
+컴포지트 패턴 설명 -> <https://ko.wikipedia.org/wiki/%EC%BB%B4%ED%8F%AC%EC%A7%80%ED%8A%B8_%ED%8C%A8%ED%84%B4>
+
+먼저 컴포지트 패턴을 구현할 interface를 만든다.
+
+~~~
+public interface DoTest {
+    void run(TestResult result);
+}
+~~~
+
+그다음 TestSuite class 를 만들어 TestCase들을 모아 실행시킬 수 있도록 코드를 구성하였다.
+
+~~~
+public class TestSuite implements DoTest {
+
+    private ArrayList<TestCase> testCases = new ArrayList<>();
+
+    @Override
+    public void run(TestResult result) {
+        for(TestCase aCase : testCases){
+            aCase.run(result);
+        }
+    }
+
+    public void addTestCase (TestCase testCase){
+        testCases.add(testCase);
+    }
+}
+~~~
+
+그렇다면 최종적으로 main 함수는 
+
+~~~
+public static void main(String[] args) {
+
+        TestResult result = new TestResult();
+
+        TestSuite testSuite = new TestSuite();
+
+        testSuite.addTestCase(new WasRun("testMethod"));
+        testSuite.addTestCase(new WasRun("testMethod2"));
+        testSuite.addTestCase(new WasRun("testMethod3"));
+
+        testSuite.run(result);
+
+        logger.info(result.summary());
+}
+~~~
+결과는 마찬가지로 아래와 같이 동일한 결과가 출력이 되는것을 볼 수 있다.
+~~~
+00:46:22.375 [main] INFO TestCase - [ testMethod ] method execute !!
+00:46:22.378 [main] INFO Assert - Test failed
+00:46:22.378 [main] INFO TestCase - [ testMethod2 ] method execute !!
+00:46:22.378 [main] INFO Assert - Test failed
+00:46:22.378 [main] INFO TestCase - [ testMethod3 ] method execute !!
+00:46:22.378 [main] INFO Assert - Test passed
+00:46:22.378 [main] INFO TestCaseTest - 3 run, 2 failed, 0 error
+~~~
+
+그렇다면 최종적으로 마지막 TODO 를 지워도 되겠다.
+ ### 테스트 프레임워크에 대한 할일 목록
+
+- [x] 테스트 메서드 호출하기
+- [x] 먼저 setUp 호출하기
+- [x] 나중에 tearDown 호출하기
+- [x] 테스트 메서드가 실패하더라도 tearDown 호출하기
+- [x] 여러 개의 테스트 실행하기
+- [x] 수집된 결과를 출력하기
+- [x] WasRun에 로그 문자열 남기기
+- [x] 실패한 테스트 보고하기
+---
+
+## 회고
+TDD를 공부하면서 xunit까지 만들어 보니 생각보다 어려운 내용은 아니지만
+
+정말 많이 생각하게 되었다. 특히 디자인 패턴을 공부해보고 싶다는 생각이 들어
+
+사이드 프로젝트 구상 계획 전 디자인 패턴을 한번 공부하고 들어갈것이다.
