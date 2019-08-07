@@ -17,9 +17,19 @@ class TestCaseTest  {
 
         logger.info("test :: --> " + ((WasRun) wasRun).getWasRun());*/
 
+        TestResult result = new TestResult();
+
         TestCase test = new WasRun("testMethod");
 
-        TestResult result = test.run();
+        TestCase test2 = new WasRun("testMethod2");
+
+        TestCase test3 = new WasRun("testMethod3");
+
+        test.run(result);
+
+        test2.run(result);
+
+        test3.run(result);
 
         logger.info(result.summary());
         //Assert.assertTrue(result.summary().equals("1 run, 0 failed"));

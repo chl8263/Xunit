@@ -11,6 +11,7 @@ public class Assert {
 
     public static void assertTrue(boolean condition){
         if(!condition){
+            logger.info("Test failed");
             throw new AssertFaliedError();
         }
         logger.info("Test passed");

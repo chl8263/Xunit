@@ -14,8 +14,7 @@ public abstract class TestCase {
         this.name = name;
     }
 
-    public TestResult run(){
-        TestResult result = new TestResult();
+    public void run(TestResult result){
 
         result.testStart();
         setUp();
@@ -35,7 +34,7 @@ public abstract class TestCase {
         }finally {
             tearDown();
         }
-        return result;
+        //return result;
     }
 
     public abstract void setUp();
@@ -43,6 +42,6 @@ public abstract class TestCase {
     public abstract void tearDown();
 
     private boolean isAssertFailed(InvocationTargetException e){
-        return e.getTargetException() instanceof InvocationTargetException;
+        return e.getTargetException() instanceof AssertFaliedError;
     }
 }
