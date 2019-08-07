@@ -743,5 +743,5 @@ public static void main(String[] args) {
 
 그룹과 개별은 단위자체가 다르다 이것을 Composite패턴을 이용하면 해결이 가능하다.
 
-<https://ko.wikipedia.org/wiki/%EC%BB%B4%ED%8F%AC%EC%A7%80%ED%8A%B8_%ED%8C%A8%ED%84%B4>
+컴포지트 패턴 설명 -> <https://ko.wikipedia.org/wiki/%EC%BB%B4%ED%8F%AC%EC%A7%80%ED%8A%B8_%ED%8C%A8%ED%84%B4>
 
