@@ -19,19 +19,29 @@ class TestCaseTest  {
 
         TestResult result = new TestResult();
 
-        TestCase test = new WasRun("testMethod");
+        TestSuite testSuite = new TestSuite();
+
+        testSuite.addTestCase(new WasRun("testMethod"));
+        testSuite.addTestCase(new WasRun("testMethod2"));
+        testSuite.addTestCase(new WasRun("testMethod3"));
+
+        testSuite.run(result);
+
+        logger.info(result.summary());
+
+        /*TestCase test = new WasRun("testMethod");
 
         TestCase test2 = new WasRun("testMethod2");
 
-        TestCase test3 = new WasRun("testMethod3");
+        TestCase test3 = new WasRun("testMethod3");*/
 
-        test.run(result);
+        /*test.run(result);
 
         test2.run(result);
 
-        test3.run(result);
+        test3.run(result);*/
 
-        logger.info(result.summary());
+        //logger.info(result.summary());
         //Assert.assertTrue(result.summary().equals("1 run, 0 failed"));
     }
 
