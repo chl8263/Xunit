@@ -684,3 +684,38 @@ try ~ catch 구문이 전과는 좀 다르게 수정이 되었다.
 
 InvocationTargetException 이 AssertFaliedError 인지 아닌지 판단하는 함수이다. github 코드 TestCase.java 를 확인해보길 바란다.
 
+지금까지 xunit을 만들다가 수정했으면 하는 사항이 발견이 되었다.
+
+아래의 코드처럼 기존의 WasRun class의 run 메소드를 실행시에 TestResult class 를 반환하게 만들었는데
+~~~
+TestResult result = test.run(result);
+~~~
+이처럼 매 함수를 실행시에 계속 새로운 인스턴스를 만든다면
+~~~
+23:18:36.842 [main] INFO TestCaseTest - 3 run, 2 failed, 0 error
+~~~
+위의 실행결과 로그와 같이 여러개의 메소드를 한번에 검사할 수 없다.
+
+따라서 TestResult를 최초에 한번 만들고 넘기는 식으로 구현을 살짝 바꾸었다.
+
+~~~
+public static void main(String[] args) {
+
+        TestResult result = new TestResult();
+
+        TestCase test = new WasRun("testMethod");
+
+        TestCase test2 = new WasRun("testMethod2");
+
+        TestCase test3 = new WasRun("testMethod3");
+
+        test.run(result);
+
+        test2.run(result);
+
+        test3.run(result);
+
+        logger.info(result.summary());
+}
+~~~
+
